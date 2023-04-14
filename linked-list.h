@@ -2,14 +2,14 @@
 
 #define _LINKED_LIST 
 
-typedef struct {
+typedef struct node_struct {
     void *data;
-    struct node *next;
+    struct node_struct *next;
 } Node;
 
 typedef struct {
-    Node head;
-    Node foot;
+    Node *head;
+    Node *foot;
 } Linked_List;
 
 // makes an empty list
@@ -21,13 +21,10 @@ int is_empty(Linked_List *list);
 // inserts data at head
 void insert_at_head(Linked_List *list, void *data);
 
-// inserts data at foot
-void insert_at_foot(Linked_List *list, void *data);
-
-// returns the head of a list
-Node get_head(Linked_List *list);
-
 // removes the head of a list
 void remove_head(Linked_List *list);
+
+// frees linked list
+void free_list(Linked_List *list);
 
 #endif

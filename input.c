@@ -1,7 +1,7 @@
 # include "input.h"
 
 Parameters *get_parameters(int argc, char* argv[]) {
-    Parameters * parameters = malloc(sizeof(Parameters));
+    Parameters *parameters = malloc(sizeof(Parameters));
 
     // checks all flags, saving information to parameters
     for (int i = 1; i < argc; i += 2) {
