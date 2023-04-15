@@ -1,4 +1,4 @@
-# include "input.h"
+#include "input.h"
 
 Parameters *get_parameters(int argc, char* argv[]) {
     Parameters *parameters = malloc(sizeof(Parameters));
@@ -27,3 +27,19 @@ Parameters *get_parameters(int argc, char* argv[]) {
     return parameters;
 }
 
+// inputs all new processes with an arival time less than the current time
+void parse_new_processes(Queue input_queue, FILE *file_pointer, int time) {
+    int arrival_time, time_remaining, memory_required, file_pointer_position;
+    char name[256];
+    while (!feof(file_pointer)) {
+        file_pointer_position = ftell(file_pointer);
+        if(fscanf(file_pointer, "%d %s %d %d", &arrival_time, name, &time_remaining, &memory_required) != 4) break;
+
+        if (arrival_time > time) {
+            fseek(file_pointer, file_pointer_position, SEEK_SET);
+            break;
+        }
+        Process *p = create_process(arrival_time, time_remaining, name, memory_required);
+        enqueue(input_queue, p);
+    }
+}

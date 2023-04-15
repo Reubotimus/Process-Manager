@@ -1,6 +1,7 @@
 #ifndef _MEMORY_MANAGER 
 #define _MEMORY_MANAGER 
 #include "queue.h"
+#include "process.h"
 
 enum Memory_Strategy {INFINITE, BEST_FIT};
 

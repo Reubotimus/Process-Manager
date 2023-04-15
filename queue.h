@@ -6,7 +6,7 @@ enum Queue_Type {STANDARD, PRIORITY};
 
 
 typedef struct {
-    void *queue;
+    Linked_List *list;
     enum Queue_Type type;
 } Queue;
 
@@ -21,8 +21,8 @@ int is_empty_queue(Queue queue);
 void free_queue(Queue queue);
 
 // returns the head of the queue and removes it from the queue
-void *dequeue(Queue *queue);
+void *dequeue(Queue queue);
 
 // inserts element at end of queue
-void enqueue(Queue *queue, void *element);
+void enqueue(Queue queue, void *element);
 #endif

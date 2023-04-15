@@ -21,6 +21,9 @@ int is_empty(Linked_List *list);
 // inserts data at head
 void insert_at_head(Linked_List *list, void *data);
 
+// inserts data at head
+void insert_at_foot(Linked_List *list, void *data);
+
 // removes the head of a list
 void remove_head(Linked_List *list);
 
