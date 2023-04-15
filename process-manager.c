@@ -11,36 +11,42 @@
 
 
 // performs one run cycle in the process manager, gets new processes, allocates memory and schedules a process for the next quantum
-int run_cycle(Parameters *parameters, int time, Process *running_process, Queue input_queue, Queue ready_queue, Linked_List *memory_list);
+int run_cycle(Manager *manager, int time, Queue input_queue, Queue ready_queue, Linked_List *memory_list);
 
 
 int main(int argc, char *argv[]) {
-    Parameters *parameters = get_parameters(argc, argv);
+    Manager *manager = get_manager(argc, argv);
     
     // initialises queues and running process, the type of queue is according to efficiency
-    Process *running_process = NULL;
     Queue input = create_queue(STANDARD); 
     Queue ready;
     Linked_List *memory_list = create_list();
-    if (parameters->scheduler_algorithm == SJF) ready = create_queue(PRIORITY);
+    if (manager->scheduler_algorithm == SJF) ready = create_queue(PRIORITY);
     else ready = create_queue(STANDARD);
     int time = 0;
 
-    while (run_cycle(parameters, time, running_process, input, ready, memory_list)) time += parameters->quantum;
+    while (run_cycle(manager, time, input, ready, memory_list)) time += manager->quantum;
 
-    fclose(parameters->file_pointer);
+    fclose(manager->file_pointer);
     free_queue(ready);
     free_queue(input);
-    free(parameters);
+    free(manager);
 }
 
-int run_cycle(Parameters *parameters, int time, Process *running_process, Queue input_queue, Queue ready_queue, Linked_List *memory_list) {
-    running_process = update_running_process(running_process, time);
-    parse_new_processes(input_queue, parameters->file_pointer, time);
-    if (parameters->memory_strategy == BEST_FIT) allocate_memory(memory_list, ready_queue, time);
-    running_process = select_new_process(ready_queue, running_process, time);
-    if (running_process == NULL && feof(parameters->file_pointer) && is_empty_queue(ready_queue) && is_empty_queue(input_queue)) return 0;
-    sleep(parameters->quantum);
+int run_cycle(Manager *manager, int time, Queue input_queue, Queue ready_queue, Linked_List *memory_list) {
+    manager->running_process = check_running_process(manager->running_process, time, (*ready_queue.length) + (*input_queue.length));
+    if (manager->running_process == NULL && feof(manager->file_pointer) && is_empty_queue(ready_queue) && is_empty_queue(input_queue)) return 0;
+    
+    if (manager->memory_strategy == INFINITE) {
+        parse_new_processes(ready_queue, manager->file_pointer, time);
+    } else {
+        parse_new_processes(input_queue, manager->file_pointer, time);
+        // allocate_memory(memory_list, ready_queue, time);
+    }
+
+    manager->running_process = select_new_process(ready_queue, manager->running_process, time);
+    //sleep(manager->quantum);
+    if (manager->running_process != NULL) manager->running_process->time_remaining -= manager->quantum;
     return 1;
 }
 

@@ -8,6 +8,7 @@ enum Queue_Type {STANDARD, PRIORITY};
 typedef struct {
     Linked_List *list;
     enum Queue_Type type;
+    int *length;
 } Queue;
 
 

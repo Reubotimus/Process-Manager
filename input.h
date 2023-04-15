@@ -6,16 +6,17 @@
 #include "memory-manager.h"
 #include "process-scheduler.h"
 
-typedef struct Parameters_Struct {
+typedef struct {
     FILE *file_pointer;
     enum Scheduler_Algorithm scheduler_algorithm;
     enum Memory_Strategy memory_strategy;
     int quantum;
-} Parameters;
+    Process *running_process;
+} Manager;
 
 // inputs all new processes with an arival time less than the current time
 void parse_new_processes(Queue input_queue, FILE *file_pointer, int time);
 
 // parses the command line arguments, returning a struct with all relevant information
-Parameters *get_parameters(int argc, char* argv[]);
+Manager *get_manager(int argc, char* argv[]);
 #endif

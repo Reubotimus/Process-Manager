@@ -13,7 +13,8 @@ int less_than(Node *node_1, Node *node_2) {
 // creates a prority queue using a min-heap
 Queue create_queue(enum Queue_Type type) {
     Linked_List *list = create_list();
-    Queue queue = {list, type};
+    int *number = malloc(sizeof(int));
+    Queue queue = {list, type, number};
     return queue;
 }
 
@@ -24,6 +25,7 @@ int is_empty_queue(Queue queue) {
 
 // frees all allocated memory associated with queue
 void free_queue(Queue queue) {
+    free(queue.length);
     free_list(queue.list);
 }
 
@@ -31,12 +33,15 @@ void free_queue(Queue queue) {
 // inserts element at end of queue
 void enqueue(Queue queue, void *element) {
     insert_at_foot(queue.list, element);
+    (*queue.length)++;
 }
 
 // returns the head of the queue and removes it from the queue
 void *dequeue(Queue queue) {
     // ensures the queue is not empty
     assert(!is_empty_queue(queue));
+
+    (*queue.length)--;
 
     // if standard queue, removes and returns head of linked list
     if (queue.type == STANDARD) {

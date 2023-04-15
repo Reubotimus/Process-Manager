@@ -14,8 +14,8 @@ typedef struct {
 // creates linked list representing memory
 
 // allocates memory in the linked list to the process
-int allocate_memory(Linked_List *memory_list, Queue processes, int time);
+//int allocate_memory(Linked_List *memory_list, Queue processes, int time);
 
 // deallocate memory
-int deallocate_memory(Linked_List *memory_list, Process *process);
+//int deallocate_memory(Linked_List *memory_list, Process *process);
 #endif
