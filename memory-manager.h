@@ -12,10 +12,11 @@ typedef struct {
 } Memory_Segment;
 
 // creates linked list representing memory
+Linked_List *create_memory_list();
 
 // allocates memory in the linked list to the process
-//int allocate_memory(Linked_List *memory_list, Queue processes, int time);
+void allocate_memory(Linked_List *memory_list, Queue input_queue, Queue ready_queue, int time);
 
 // deallocate memory
-//int deallocate_memory(Linked_List *memory_list, Process *process);
+void deallocate_memory(Linked_List *memory_list, Process *process);
 #endif

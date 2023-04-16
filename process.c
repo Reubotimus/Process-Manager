@@ -1,4 +1,5 @@
 #include "process.h"
+#include "memory-manager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -23,11 +24,12 @@ Process *create_process(int arival_time, int time_remaining, char *name, int mem
 }
 
 // checks if process is finished running
-Process *check_running_process(Process *running_process, int time, int num_processes_left) {
+Process *check_running_process(Linked_List *memory_list, Process *running_process, int time, int num_processes_left) {
     if (running_process == NULL) return NULL;
 
     if (running_process->time_remaining <= 0) {
         printf("%d,FINISHED,process_name=%s,proc_remaining=%d\n", time, running_process->name, num_processes_left);
+        deallocate_memory(memory_list, running_process);
         free_process(running_process);
         return NULL;
     }

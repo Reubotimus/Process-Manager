@@ -34,14 +34,17 @@ int main(int argc, char *argv[]) {
 }
 
 int run_cycle(Manager *manager, int time, Queue input_queue, Queue ready_queue, Linked_List *memory_list) {
-    manager->running_process = check_running_process(manager->running_process, time, (*ready_queue.length) + (*input_queue.length));
+    manager->running_process = check_running_process(memory_list, manager->running_process, time, (*ready_queue.length) + (*input_queue.length));
+    //printf("Checked running processs\n");
     if (manager->running_process == NULL && feof(manager->file_pointer) && is_empty_queue(ready_queue) && is_empty_queue(input_queue)) return 0;
-    
+    //printf("Checked if end of manager\n");
     if (manager->memory_strategy == INFINITE) {
         parse_new_processes(ready_queue, manager->file_pointer, time);
     } else {
         parse_new_processes(input_queue, manager->file_pointer, time);
-        // allocate_memory(memory_list, ready_queue, time);
+        //printf("parsed new processes\n");
+        allocate_memory(memory_list, input_queue, ready_queue, time);
+        //printf("allocated new processe size = %d\n", *input_queue.length);
     }
 
     manager->running_process = select_new_process(ready_queue, manager->running_process, time);

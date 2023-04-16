@@ -15,6 +15,9 @@ typedef struct {
 // makes an empty list
 Linked_List *create_list();
 
+// creates node for a linked list
+Node *create_node(void *data, Node *next);
+
 // checks if there are any nodes in the linked list
 int is_empty(Linked_List *list);
 

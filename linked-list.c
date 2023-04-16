@@ -74,4 +74,5 @@ void free_list(Linked_List *list) {
         free(current_node);
         current_node = next;
     }
+    free(list);
 }
