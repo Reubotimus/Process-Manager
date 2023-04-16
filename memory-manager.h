@@ -11,6 +11,8 @@ typedef struct {
     int end;
 } Memory_Segment;
 
+Memory_Segment *node_segment(Node *node);
+
 // creates linked list representing memory
 Linked_List *create_memory_list();
 

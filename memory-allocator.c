@@ -34,6 +34,8 @@ int memory_size(Node *node) {
 int better_fit(Node *node1, Node *node2, Process *process) {
     if (memory_size(node1) < process->memory_required) return 0;
     if (memory_size(node2) < process->memory_required) return 1;
+    if (!node_segment(node2)->is_hole) return 1;
+    if (!node_segment(node1)->is_hole) return 0;
     return memory_size(node1) < memory_size(node2);
 }
 
@@ -41,12 +43,18 @@ int better_fit(Node *node1, Node *node2, Process *process) {
 Node *find_best_fit(Linked_List *memory_list, Process *process) {
     Node *current_node = memory_list->head, *best_node = memory_list->head;
     while (current_node != NULL) {
+
+        if (!node_segment(current_node)->is_hole) {
+            current_node = current_node->next;
+            continue;
+        }
+
         if (better_fit(current_node, best_node, process)) {
-            printf("sizeof best node = %d", memory_size(best_node));
             best_node = current_node;
         }
         current_node = current_node->next;
     }
+    if (!node_segment(best_node)->is_hole) return NULL;
     if (memory_size(best_node) < process->memory_required) return NULL;
     return best_node;
 }
@@ -56,7 +64,7 @@ void allocate_node(Linked_List *list, Node *node, Process *process) {
     Memory_Segment *segment = node_segment(node);
 
     process->memory_address = segment->start;
-    segment->is_hole = 0;
+    segment->is_hole = NOT_HOLE;
     int old_end = segment->end;
     segment->end = segment->start + process->memory_required;
 
@@ -92,6 +100,8 @@ void allocate_memory(Linked_List *memory_list, Queue input_queue, Queue ready_qu
         allocate_node(memory_list, best_node, process_to_allocate);
         enqueue(ready_queue, process_to_allocate);
         printf("%d,READY,process_name=%s,assigned_at=%d\n", time, process_to_allocate->name, process_to_allocate->memory_address);
+
+        
     }
 
     input_queue.list->head = new_input_queue_list->head;
@@ -105,14 +115,17 @@ void merge_holes(Linked_List *memory_list, Node *first_node) {
     node_segment(first_node)->end = node_segment(first_node->next)->end;
     if (memory_list->foot == first_node->next) {
         memory_list->foot = first_node;
+        free(first_node->next->data);
         free(first_node->next);
         first_node->next = NULL;
         return;
     }
     Node *temp = first_node->next;
     first_node->next = temp->next;
+    free(temp->data);
     free(temp);
 }
+
 // deallocate memory
 void deallocate_memory(Linked_List *memory_list, Process *process) {
     Node *current_node = memory_list->head, *previous_to_segment = NULL, *segment_node = memory_list->head;
@@ -125,16 +138,17 @@ void deallocate_memory(Linked_List *memory_list, Process *process) {
         current_node = current_node->next;
     }
 
-    if (previous_to_segment != NULL) {
-        if (node_segment(previous_to_segment)->is_hole) merge_holes(memory_list, previous_to_segment);
-    } else {
-        node_segment(segment_node)->is_hole = HOLE;
+    node_segment(segment_node)->is_hole = HOLE;
+    if (previous_to_segment != NULL && node_segment(previous_to_segment)->is_hole) {
+        merge_holes(memory_list, previous_to_segment);
+        segment_node = previous_to_segment;
     }
+
+    if (segment_node->next != NULL && node_segment(segment_node->next)->is_hole) {
+        merge_holes(memory_list, segment_node);
+    }
+
     if (segment_node->next == NULL) {
         memory_list->foot = segment_node;
-    } else {
-        if (node_segment(segment_node->next)->is_hole) {
-            merge_holes(memory_list, segment_node);
-        }
     }
 }

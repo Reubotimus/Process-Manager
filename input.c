@@ -37,6 +37,7 @@ void parse_new_processes(Queue input_queue, FILE *file_pointer, int time) {
         if(fscanf(file_pointer, "%d %s %d %d", &arrival_time, name, &time_remaining, &memory_required) != 4) break;
 
         if (arrival_time > time) {
+            //printf("a: %d, t: %d\n",arrival_time, time);
             fseek(file_pointer, file_pointer_position, SEEK_SET);
             break;
         }

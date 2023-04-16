@@ -30,6 +30,10 @@ Process *check_running_process(Linked_List *memory_list, Process *running_proces
     if (running_process->time_remaining <= 0) {
         printf("%d,FINISHED,process_name=%s,proc_remaining=%d\n", time, running_process->name, num_processes_left);
         deallocate_memory(memory_list, running_process);
+        /*for (Node *n = memory_list->head; n != NULL; n = n->next){
+            printf("%d %d %d    ", node_segment(n)->start, node_segment(n)->is_hole, node_segment(n)->end);
+        }
+        printf("\n");*/
         free_process(running_process);
         return NULL;
     }

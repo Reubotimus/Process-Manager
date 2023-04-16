@@ -1,6 +1,6 @@
 CC=gcc
 #CPPFLAGS= -Wall  -Werror  -O3 -g 
-CPPFLAGS= -Wall  -Werror  -g  -O3
+CPPFLAGS= -Wall  -Werror  -g
 LDFLAGS = -lm
 
 SRC=process-manager.o input.o linked-list.o process-scheduler.o process.o queue.o memory-allocator.o

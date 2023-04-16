@@ -1,9 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <libc.h>
 #include "process-scheduler.h"
 #include "memory-manager.h"
 #include "queue.h"
@@ -20,7 +16,7 @@ int main(int argc, char *argv[]) {
     // initialises queues and running process, the type of queue is according to efficiency
     Queue input = create_queue(STANDARD); 
     Queue ready;
-    Linked_List *memory_list = create_list();
+    Linked_List *memory_list = create_memory_list();
     if (manager->scheduler_algorithm == SJF) ready = create_queue(PRIORITY);
     else ready = create_queue(STANDARD);
     int time = 0;
@@ -43,8 +39,8 @@ int run_cycle(Manager *manager, int time, Queue input_queue, Queue ready_queue, 
     } else {
         parse_new_processes(input_queue, manager->file_pointer, time);
         //printf("parsed new processes\n");
+       // printf("%d, allocated new processe size = %d\n", time, *input_queue.length);
         allocate_memory(memory_list, input_queue, ready_queue, time);
-        //printf("allocated new processe size = %d\n", *input_queue.length);
     }
 
     manager->running_process = select_new_process(ready_queue, manager->running_process, time);
