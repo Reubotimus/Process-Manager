@@ -12,6 +12,8 @@
 // frees the memory from a process
 void free_process(Process *process) {
     free(process->name);
+    close(process->stdin_fd);
+    close(process->stdout_fd);
     free(process);
 }
 

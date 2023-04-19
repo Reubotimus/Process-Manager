@@ -30,6 +30,9 @@ int main(int argc, char *argv[]) {
     fclose(manager->file_pointer);
     free_queue(ready);
     free_queue(input);
+    free_queue(finished);
+    free(memory_list->head->data);
+    free_list(memory_list);
     free(manager);
 }
 
@@ -67,6 +70,9 @@ void print_statistics(Queue finished_queue, int time) {
         current_overhead = (double)(current_turnaround_time) / (double)(current_process->service_time);
         sum_overhead += current_overhead;
         if (current_overhead > max_overhead) max_overhead = current_overhead;
+
+        
+        free_process(node->data);
     }
     printf("Turnaround time %d\nTime overhead %.2lf %.2lf\nMakespan %d\n",
          ((sum_turnaround_times - 1) / n_process) + 1,
