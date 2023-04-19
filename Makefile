@@ -3,7 +3,7 @@ CC=gcc
 CPPFLAGS= -Wall  -Werror  -g
 LDFLAGS = -lm
 
-SRC=process-manager.o input.o linked-list.o process-scheduler.o process.o queue.o memory-allocator.o
+SRC=process-manager.o input.o linked-list.o process-scheduler.o process-utils.o queue.o memory-allocator.o
 TARGET=allocate
 
 

@@ -1,11 +1,12 @@
 #include "queue.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 /* the process header is only used for the less_than function if the data 
 type is changed only the less_than function has to be changed
 */ 
-#include "process.h"
+#include "process-utils.h"
 int less_than(Node *node_1, Node *node_2) {
     return ((Process *)node_1->data)->time_remaining < ((Process *)node_2->data)->time_remaining;
 }
@@ -49,7 +50,6 @@ void *dequeue(Queue queue) {
         remove_head(queue.list);
         return data;
     }
-
     // finds highest priority node
     Node *current_node = queue.list->head, *previous_to_min = NULL, *min_node = queue.list->head;
     while (current_node->next != NULL) {
@@ -70,8 +70,8 @@ void *dequeue(Queue queue) {
         queue.list->foot->next = NULL;
     }
     else {
-        free(min_node);
         previous_to_min->next = min_node->next;
+        free(min_node);
     }
     return data;
 }

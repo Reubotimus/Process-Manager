@@ -28,7 +28,7 @@ Manager *get_manager(int argc, char* argv[]) {
     return manager;
 }
 
-// inputs all new processes with an arival time less than the current time
+// inputs all new processes with an arrival time less than the current time
 void parse_new_processes(Queue input_queue, FILE *file_pointer, int time) {
     int arrival_time, time_remaining, memory_required, file_pointer_position;
     char name[256];

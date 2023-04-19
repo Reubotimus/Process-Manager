@@ -1,7 +1,7 @@
 #ifndef _PROCESS_SCHEDULER
 #define _PROCESS_SCHEDULER 
 
-#include "process.h"
+#include "process-utils.h"
 #include "queue.h"
 
 enum Scheduler_Algorithm {SJF, RR};

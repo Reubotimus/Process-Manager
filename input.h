@@ -14,7 +14,7 @@ typedef struct {
     Process *running_process;
 } Manager;
 
-// inputs all new processes with an arival time less than the current time
+// inputs all new processes with an arrival time less than the current time
 void parse_new_processes(Queue input_queue, FILE *file_pointer, int time);
 
 // parses the command line arguments, returning a struct with all relevant information
