@@ -19,7 +19,7 @@ Process *select_new_process(Queue ready_queue, Process *running_process, int tim
         print_new_process(new_process, time);
         return new_process;
     }
-    if (ready_queue.type == PRIORITY) return running_process;
+    if (ready_queue.type == PRIORITY) {resume_process(running_process, time); return running_process;}
     else {
         if (*ready_queue.length == 0) {
             resume_process(running_process, time);
