@@ -15,6 +15,7 @@ typedef struct {
     int end;
 } Memory_Segment;
 
+// gets the memory segment from a node
 Memory_Segment *node_segment(Node *node);
 
 // creates linked list representing memory

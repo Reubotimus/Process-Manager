@@ -30,9 +30,16 @@ Process *check_running_process(Linked_List *memory_list, Queue finished_queue, P
 // prints the values of a process mainly for debugging and testing
 void print_process(Process *process);
 
+// creates instance of process executable with I/O connected to file descriptors
 void create_forked_process(Process *process, int time, int verbose);
+
+// suspends process executable and sends it the time it is being suspended
 void suspend_process(Process *process, int time);
+
+// resumes process executable and sends it the time
 void resume_process(Process *process, int time);
+
+// terminates process executable gets and prints associated hash
 void terminate_process(Process *process, int time);
 
 #endif

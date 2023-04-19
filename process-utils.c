@@ -52,26 +52,22 @@ void print_process(Process *process) {
     printf("Name: %s, Time Remaining: %d\n", process->name, process->time_remaining);
 }
 
+// creates instance of process executable with I/O connected to file descriptors
 void create_forked_process(Process *process, int time, int verbose) {
-    
+    // creates pipes
     int stdin_pipe[2], stdout_pipe[2];
-
     if (pipe(stdin_pipe) < 0) {
         perror("pipe");
         exit(EXIT_FAILURE);
     }
-
     if (pipe(stdout_pipe) < 0) {
         perror("pipe");
         exit(EXIT_FAILURE);
     }
-    
+    // forks process
     pid_t pid = fork();
-
     if (pid == 0) {
-        if (verbose) {
-            fprintf(stderr, "Debug logs enabled.\n");
-        }
+        // child process connects files to STDIN and STDOUT then execvps process executable
         
         close(stdin_pipe[1]);  // close write end of stdin pipe
         close(stdout_pipe[0]); // close read end of stdout pipe
@@ -91,22 +87,22 @@ void create_forked_process(Process *process, int time, int verbose) {
         perror("fork failed");
         exit(EXIT_FAILURE);
     }
-
+    // closes unneeded descriptors
     close(stdin_pipe[0]);   // close read end of stdin pipe
     close(stdout_pipe[1]);  // close write end of stdout pipe
 
+    // saves relavent information to process struct
     process->pid = pid;
     process->stdin_fd = stdin_pipe[1];
     process->stdout_fd = stdout_pipe[0];
 
+    // Send 32 bit simulation time of when the process starts running to child process
     uint8_t bytes[4] = {
                         ((time >> (8 * 3)) & 0xff),
                         ((time >> (8 * 2)) & 0xff), 
                         ((time >> (8 * 1)) & 0xff),
                         ((time >> (8 * 0)) & 0xff)
                         };
-
-    // Send 32 bit simulation time of when the process starts running to child process
     write(process->stdin_fd, bytes, 4*sizeof(uint8_t));
 
     // Read least significant byte (last byte) from child process's stdout and verify that it matches the start time
@@ -119,15 +115,15 @@ void create_forked_process(Process *process, int time, int verbose) {
 
 }
 
+// suspends process executable and sends it the time it is being suspended
 void suspend_process(Process *process, int time) {
+    // Send 32 bit simulation time of when the process starts running to child process
     uint8_t bytes[4] = {
                         ((time >> (8 * 3)) & 0xff),
                         ((time >> (8 * 2)) & 0xff), 
                         ((time >> (8 * 1)) & 0xff),
                         ((time >> (8 * 0)) & 0xff)
                         };
-
-    // Send 32 bit simulation time of when the process starts running to child process
     write(process->stdin_fd, bytes, 4*sizeof(uint8_t));
     
     pid_t child_pid = process->pid;
@@ -146,15 +142,15 @@ void suspend_process(Process *process, int time) {
     
 }
 
+// resumes process executable and sends it the time
 void resume_process(Process *process, int time) {
+    // Send 32 bit simulation time of when the process starts running to child process
     uint8_t bytes[4] = {
                         ((time >> (8 * 3)) & 0xff),
                         ((time >> (8 * 2)) & 0xff), 
                         ((time >> (8 * 1)) & 0xff),
                         ((time >> (8 * 0)) & 0xff)
                         };
-
-    // Send 32 bit simulation time of when the process starts running to child process
     write(process->stdin_fd, bytes, 4*sizeof(uint8_t));
 
     pid_t child_pid = process->pid;
@@ -172,14 +168,15 @@ void resume_process(Process *process, int time) {
     }
 }
 
+// terminates process executable gets and prints associated hash
 void terminate_process(Process *process, int time) {
+    // Send 32 bit simulation time of when the process is terminated
     uint8_t bytes[4] = {
                         ((time >> (8 * 3)) & 0xff),
                         ((time >> (8 * 2)) & 0xff), 
                         ((time >> (8 * 1)) & 0xff),
                         ((time >> (8 * 0)) & 0xff)
                         };
-    // Send 32 bit simulation time of when the process is terminated
     write(process->stdin_fd, bytes, 4*sizeof(uint8_t));
 
     // Send SIGTERM signal to process

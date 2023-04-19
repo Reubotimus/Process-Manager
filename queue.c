@@ -2,13 +2,21 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 /* the process header is only used for the less_than function if the data 
 type is changed only the less_than function has to be changed
 */ 
 #include "process-utils.h"
 int less_than(Node *node_1, Node *node_2) {
-    return ((Process *)node_1->data)->time_remaining < ((Process *)node_2->data)->time_remaining;
+    int result = ((Process *)node_1->data)->time_remaining < ((Process *)node_2->data)->time_remaining;
+    if (result == 0 && ((Process *)node_1->data)->arrival_time == ((Process *)node_2->data)->arrival_time) {
+        return strcmp(((Process *)node_1->data)->name, ((Process *)node_2->data)->name);
+    }
+    if (result == 0) {
+        return ((Process *)node_1->data)->arrival_time < ((Process *)node_2->data)->arrival_time;
+    }
+    return result;
 }
 
 // creates a prority queue using a min-heap
@@ -17,6 +25,7 @@ Queue create_queue(enum Queue_Type type) {
     int *number = malloc(sizeof(int));
     *number = 0;
     Queue queue = {list, type, number};
+
     return queue;
 }
 

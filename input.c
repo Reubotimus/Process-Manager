@@ -32,12 +32,13 @@ Manager *get_manager(int argc, char* argv[]) {
 void parse_new_processes(Queue input_queue, FILE *file_pointer, int time) {
     int arrival_time, time_remaining, memory_required, file_pointer_position;
     char name[256];
+    
     while (!feof(file_pointer)) {
         file_pointer_position = ftell(file_pointer);
         if(fscanf(file_pointer, "%d %s %d %d", &arrival_time, name, &time_remaining, &memory_required) != 4) break;
-
+        
+        // moves file pointer back to start of line
         if (arrival_time > time) {
-            //printf("a: %d, t: %d\n",arrival_time, time);
             fseek(file_pointer, file_pointer_position, SEEK_SET);
             break;
         }

@@ -22,6 +22,7 @@ Linked_List *create_memory_list() {
     return list;
 }
 
+// returns the memory segment contained by a node
 Memory_Segment *node_segment(Node *node) {
     return (Memory_Segment*)node->data;
 }
@@ -110,7 +111,7 @@ void allocate_memory(Linked_List *memory_list, Queue input_queue, Queue ready_qu
     free(new_input_queue_list);
 }
 
-// merges the first and next node 
+// merges the memory segments and updates linked list
 void merge_holes(Linked_List *memory_list, Node *first_node) {
     node_segment(first_node)->end = node_segment(first_node->next)->end;
     if (memory_list->foot == first_node->next) {
@@ -126,8 +127,9 @@ void merge_holes(Linked_List *memory_list, Node *first_node) {
     free(temp);
 }
 
-// deallocate memory
+// deallocates memory associated with process
 void deallocate_memory(Linked_List *memory_list, Process *process) {
+    // finds memory segment associated with process
     Node *current_node = memory_list->head, *previous_to_segment = NULL, *segment_node = memory_list->head;
     while (current_node->next != NULL) {
         if (node_segment(current_node->next)->start == process->memory_address) {
@@ -138,16 +140,19 @@ void deallocate_memory(Linked_List *memory_list, Process *process) {
         current_node = current_node->next;
     }
 
+    // merges segment with previous segment if it is a hole
     node_segment(segment_node)->is_hole = HOLE;
     if (previous_to_segment != NULL && node_segment(previous_to_segment)->is_hole) {
         merge_holes(memory_list, previous_to_segment);
         segment_node = previous_to_segment;
     }
 
+    // mergers segment with next segment if it is a hole
     if (segment_node->next != NULL && node_segment(segment_node->next)->is_hole) {
         merge_holes(memory_list, segment_node);
     }
 
+    // ensures the linked list has an accurate foot
     if (segment_node->next == NULL) {
         memory_list->foot = segment_node;
     }
