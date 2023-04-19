@@ -15,6 +15,7 @@ int less_than(Node *node_1, Node *node_2) {
 Queue create_queue(enum Queue_Type type) {
     Linked_List *list = create_list();
     int *number = malloc(sizeof(int));
+    *number = 0;
     Queue queue = {list, type, number};
     return queue;
 }

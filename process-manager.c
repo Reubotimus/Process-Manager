@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     // initialises queues and running process, the type of queue is according to efficiency
     Queue input = create_queue(STANDARD); 
     Queue finished = create_queue(STANDARD);
-    Queue ready;
+    Queue ready = {NULL, 0, NULL};
     Linked_List *memory_list = create_memory_list();
     if (manager->scheduler_algorithm == SJF) ready = create_queue(PRIORITY);
     else ready = create_queue(STANDARD);
@@ -58,9 +58,9 @@ int run_cycle(Manager *manager, int time, Queue input_queue, Queue ready_queue, 
 
 
 void print_statistics(Queue finished_queue, int time) {
-    int sum_turnaround_times = 0, n_process = *finished_queue.length, current_turnaround_time;
-    double max_overhead, sum_overhead, current_overhead;
-    Process* current_process;
+    int sum_turnaround_times = 0, n_process = *finished_queue.length, current_turnaround_time = 0;
+    double max_overhead = 0, sum_overhead = 0, current_overhead = 0;
+    Process* current_process = NULL;
 
     for (Node *node = finished_queue.list->head; node != NULL; node = node->next) {
         current_process = (Process*)node->data;
@@ -71,14 +71,11 @@ void print_statistics(Queue finished_queue, int time) {
         sum_overhead += current_overhead;
         if (current_overhead > max_overhead) max_overhead = current_overhead;
 
-        
         free_process(node->data);
     }
-    printf("Turnaround time %d\nTime overhead %.2lf %.2lf\nMakespan %d\n",
-         ((sum_turnaround_times - 1) / n_process) + 1,
-          round(max_overhead*100) / 100, 
-          round(sum_overhead / (double) n_process * 100) / 100,
-          time);
+    printf("Turnaround time %d\n", ((sum_turnaround_times - 1) / n_process) + 1);
+    printf("Time overhead %.2lf %.2lf\n", round(max_overhead*100) / 100, round(sum_overhead / (double) n_process * 100) / 100);
+    printf("Makespan %d\n", time);
 
 
 }
